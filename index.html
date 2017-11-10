@@ -31,8 +31,7 @@
             height: 50px;
         }
 
-        .square {
-            background-image: url('./img/square.png');
+        .item {
             background-size: 100% 100%;
             display: inline-block;
             width: 50px;
@@ -41,6 +40,26 @@
             line-height: 50px;
             text-align: center;
             font-weight: bolder;
+        }
+
+        .explosion {
+            background-image: url('./img/explosion.png');
+        }
+
+        .square {
+            background-image: url('./img/square.png');
+        }
+
+        .square-green {
+            background-image: url('./img/square-green.png');
+        }
+
+        .square-red {
+            background-image: url('./img/square-red.png');
+        }
+
+        .square-yellow {
+            background-image: url('./img/square-yellow.png');
         }
     </style>
 </head>
@@ -77,7 +96,7 @@
                 for (var j = 0; j < width; j++) {
                     bombMaps[i][j] = Math.floor((Math.random() * 100/difficulty)) == 0;
                     bombsNumber += bombMaps[i][j] ? 1 : 0;
-                    document.getElementById('board').innerHTML += `<div id="square_${ i }_${ j }" class="square" onclick="selectItem(${ i }, ${ j }, true, event)" clicked="0">&nbsp;</div>`;
+                    document.getElementById('board').innerHTML += `<div id="square_${ i }_${ j }" class="item square" onclick="selectItem(${ i }, ${ j }, true, event)" clicked="0">&nbsp;</div>`;
                 }
                 document.getElementById('board').innerHTML += '<br>';
             }
@@ -93,7 +112,7 @@
                 if (document.getElementById(`square_${ column }_${ row }`).marked != '1') {
                     if (bombMaps[column][row]) {
                         this.gameover = true;
-                        document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/explosion.png")';
+                        document.getElementById(`square_${ column }_${ row }`).className = 'item explosion';
                         if (allowRecursion) {
                             changeItensToRed();
                             for (var i = 0; i < height; i++) {
@@ -118,7 +137,7 @@
                         if (bombNumberOnSides > 0) {
                             document.getElementById(`square_${ column }_${ row }`).innerHTML = bombNumberOnSides;
                         }
-                        document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square-green.png")';
+                        document.getElementById(`square_${ column }_${ row }`).className = 'item square-green';
                         document.getElementById(`square_${ column }_${ row }`).clicked = 1;
 
                         if (allowRecursion) {
@@ -132,11 +151,11 @@
                 if (document.getElementById(`square_${ column }_${ row }`).marked == '1') {
                     bombsNumber++;
                     document.getElementById(`square_${ column }_${ row }`).marked = '0';
-                    document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square.png")';
+                    document.getElementById(`square_${ column }_${ row }`).className = 'item square';
                 } else {
                     bombsNumber--;
                     document.getElementById(`square_${ column }_${ row }`).marked = '1';
-                    document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square-yellow.png")';
+                    document.getElementById(`square_${ column }_${ row }`).className = 'item square-yellow';
                 }
                 document.getElementById('bombsNumber').innerHTML = bombsNumber + ' of ' + bombsNumberTotal;
             }
@@ -163,14 +182,14 @@
 
         function changeMovement() {
             mark = !mark;
-            document.getElementById('movementType').style.backgroundImage = 'url("./img/square-' + (mark ? 'green' : 'yellow') + '.png")';
+            document.getElementById('movementType').className = 'item square-' + (mark ? 'green' : 'yellow');
         }
 
         function changeItensToRed() {
             for (var i = 0; i < height; i++) {
                 for (var j = 0; j < width; j++) {
                     if (document.getElementById(`square_${ i }_${ j }`).marked == '1' && !bombMaps[i][j]) {
-                        document.getElementById(`square_${ i }_${ j }`).style.backgroundImage = 'url("./img/square-red.png")';
+                        document.getElementById(`square_${ i }_${ j }`).className = 'item square-red';
                     }
                 }
             }
@@ -195,6 +214,10 @@
             }
             this.gameover = true;
             return true;
+        }
+
+        function removeAllClass(item) {
+            item.className = 'item';
         }
     </script>
 </body>
