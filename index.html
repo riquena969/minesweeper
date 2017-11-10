@@ -2,8 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>...</title>
+    <title>Minesweeper</title>
     <style>
+        h1 {
+            text-transform: uppercase;
+            line-height: 50px
+        }
+
+        #movementType {
+            background-image: url("./img/square-green.png");
+            background-size: 100% 100%;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+        }
+
         .square {
             background-image: url('./img/square.png');
             background-size: 100% 100%;
@@ -20,110 +33,129 @@
            -ms-user-select: none;
            user-select: none;
         }
-
-        #tipoJogada {
-            padding: 4px 20px;
-            background-color: #323232;
-            color: #EEE;
-        }
     </style>
 </head>
 <body>
-    <h1>Campo minado</h1>
-    <div>
-        <small>Quantidade de bombas: <span id="quantidadeBombas">0</span></small>
-    </div>
-    <button id="tipoJogada" onclick="alterarJogada()">Jogar</button>
+    <h1>
+        <div id="movementType" onclick="changeMovement()" title="Click to change the type of movement"></div>
+        Minesweeper
+    </h1>
+    <div><small>Bombs number: <span id="bombsNumber">0</span></small></div>
     <div id="board"></div>
     <script>
         var width            = 12;
         var height           = 8;
-        var quantidadeBombas = 0;
-        var mapaBombas       = [];
-        var dificuldade      = 20;
-        var jogar            = true;
+        var bombsNumberTotal = 0;
+        var bombsNumber      = 0;
+        var bombMaps         = [];
+        var difficulty       = 5;
+        var mark             = true;
+        var ctrl             = false;
 
         desenharQuadro();
 
         function desenharQuadro() {
+            this.width            = 12;
+            this.height           = 8;
+            this.bombsNumber      = 0;
+            this.bombMaps         = [];
+            this.difficulty       = 5;
+            this.mark             = true;
+
             for (var i = 0; i < height; i++) {
-                mapaBombas[i] = [];
+                bombMaps[i] = [];
                 for (var j = 0; j < width; j++) {
-                    mapaBombas[i][j] = Math.floor((Math.random() * 100/dificuldade)) == 0;
-                    quantidadeBombas += mapaBombas[i][j] ? 1 : 0;
-                    document.getElementById('board').innerHTML += `<div id="quadrado_${ i }_${ j }" class="square" onclick="selecionarQuadrado(${ i }, ${ j }, true)">&nbsp;</div>`;
+                    bombMaps[i][j] = Math.floor((Math.random() * 100/difficulty)) == 0;
+                    bombsNumber += bombMaps[i][j] ? 1 : 0;
+                    document.getElementById('board').innerHTML += `<div id="square_${ i }_${ j }" class="square" onclick="selectItem(${ i }, ${ j }, true, event)">&nbsp;</div>`;
                 }
                 document.getElementById('board').innerHTML += '<br>';
             }
-
-            document.getElementById('quantidadeBombas').innerHTML = quantidadeBombas;
+            bombsNumberTotal = bombsNumber;
+            document.getElementById('bombsNumber').innerHTML = bombsNumber + ' of ' + bombsNumberTotal;
         }
 
-        function selecionarQuadrado(coluna, linha, permitirRecursao) {
-            if (jogar) {
-                if (document.getElementById(`quadrado_${ coluna }_${ linha }`).marked != '1') {
-                    if (mapaBombas[coluna][linha]) {
-                        document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/explosion.png")';
-                        if (permitirRecursao) {
+        function selectItem(column, row, allowRecursion, event) {
+            if (event && event.ctrlKey) {
+                mark = !mark;
+            }
+            if (mark) {
+                if (document.getElementById(`square_${ column }_${ row }`).marked != '1') {
+                    if (bombMaps[column][row]) {
+                        document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/explosion.png")';
+                        if (allowRecursion) {
+                            changeItensToRed();
                             for (var i = 0; i < height; i++) {
                                 for (var j = 0; j < width; j++) {
-                                    selecionarQuadrado(i, j, false);
+                                    selectItem(i, j, false);
                                 }
-                                document.getElementById('board').innerHTML += '<br>';
                             }
                         }
                     } else {
-                        var quantidadeBombasLaterais = getQuantidadeBombasLaterais(coluna, linha);
+                        var bombsNumberLaterais = getbombsNumberLaterais(column, row);
 
-                        if (quantidadeBombasLaterais == 0 && permitirRecursao) {
+                        if (bombsNumberLaterais == 0 && allowRecursion) {
                             for (var i = -1; i < 2; i++) {
                                 for (var j = -1; j < 2; j++) {
-                                    if ((coluna + i >= 0) && (linha + j >= 0) && (coluna + i < height) && (linha + j < width)) {
-                                        selecionarQuadrado(coluna + i, linha + j, false);
+                                    if ((column + i >= 0) && (row + j >= 0) && (column + i < height) && (row + j < width)) {
+                                        selectItem(column + i, row + j, false);
                                     }
                                 }
                             }
                         }
 
-                        if (quantidadeBombasLaterais > 0) {
-                            document.getElementById(`quadrado_${ coluna }_${ linha }`).innerHTML = quantidadeBombasLaterais;
+                        if (bombsNumberLaterais > 0) {
+                            document.getElementById(`square_${ column }_${ row }`).innerHTML = bombsNumberLaterais;
                         }
-                        document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square-green.png")';
+                        document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square-green.png")';
                     }
                 }
             } else {
-                if (document.getElementById(`quadrado_${ coluna }_${ linha }`).marked == '1') {
-                    quantidadeBombas++;
-                    document.getElementById(`quadrado_${ coluna }_${ linha }`).marked = '0';
-                    document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square.png")';
+                if (document.getElementById(`square_${ column }_${ row }`).marked == '1') {
+                    bombsNumber++;
+                    document.getElementById(`square_${ column }_${ row }`).marked = '0';
+                    document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square.png")';
                 } else {
-                    quantidadeBombas--;
-                    document.getElementById(`quadrado_${ coluna }_${ linha }`).marked = '1';
-                    document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square-yellow.png")';
+                    bombsNumber--;
+                    document.getElementById(`square_${ column }_${ row }`).marked = '1';
+                    document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square-yellow.png")';
                 }
-                document.getElementById('quantidadeBombas').innerHTML = quantidadeBombas;
+                document.getElementById('bombsNumber').innerHTML = bombsNumber + ' of ' + bombsNumberTotal;
+            }
+            if (event && event.ctrlKey) {
+                mark = !mark;
             }
         }
 
-        function getQuantidadeBombasLaterais(coluna, linha) {
-            var quantidadeBombasLaterais = 0;
+        function getbombsNumberLaterais(column, row) {
+            var bombsNumberLaterais = 0;
 
             for (var i = -1; i < 2; i++) {
                 for (var j = -1; j < 2; j++) {
-                    if ((coluna + i >= 0) && (linha + j >= 0) && (coluna + i < height) && (linha + j < width)) {
-                        if (mapaBombas[coluna + i][linha + j]) {
-                            quantidadeBombasLaterais++;
+                    if ((column + i >= 0) && (row + j >= 0) && (column + i < height) && (row + j < width)) {
+                        if (bombMaps[column + i][row + j]) {
+                            bombsNumberLaterais++;
                         }
                     }
                 }
             }
 
-            return quantidadeBombasLaterais;
+            return bombsNumberLaterais;
         }
 
-        function alterarJogada() {
-            jogar = !jogar;
-            document.getElementById('tipoJogada').innerHTML = jogar ? 'Jogar' : 'Marcar';
+        function changeMovement() {
+            mark = !mark;
+            document.getElementById('movementType').style.backgroundImage = 'url("./img/square-' + (mark ? 'green' : 'yellow') + '.png")';
+        }
+
+        function changeItensToRed() {
+            for (var i = 0; i < height; i++) {
+                for (var j = 0; j < width; j++) {
+                    if (document.getElementById(`square_${ i }_${ j }`).marked == '1' && !bombMaps[i][j]) {
+                        document.getElementById(`square_${ i }_${ j }`).style.backgroundImage = 'url("./img/square-red.png")';
+                    }
+                }
+            }
         }
     </script>
 </body>
