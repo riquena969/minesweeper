@@ -30,6 +30,14 @@
             height: 50px;
         }
 
+        #reloadButton {
+            background-image: url('./img/reload.png');
+            background-size: 100% 100%;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+        }
+
         .item {
             background-size: 100% 100%;
             display: inline-block;
@@ -84,6 +92,7 @@
     <h1>Minesweeper</h1>
     <a href="https://github.com/riquena969/minesweeper" target="_blank" class="github-icon"><img src="./img/github.png"></a>
     <div id="movementType" class="square-green" onclick="changeMovement()" title="Click to change the type of movement. Hint: Press ctrl to change movement temporary"></div>
+    <div id="reloadButton" onclick="startGame()" title="Click to reload the game"></div>
     <div><small>Bombs number: <span id="bombsNumber">0</span></small></div>
     <div id="board"></div>
     <script>
@@ -107,6 +116,7 @@
             this.mark             = true;
             this.gameover         = false;
 
+            document.getElementById('board').innerHTML = '';
             for (var i = 0; i < height; i++) {
                 bombMaps[i] = [];
                 for (var j = 0; j < width; j++) {
