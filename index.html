@@ -59,23 +59,25 @@
         var bombMaps;
         var difficulty;
         var mark;
+        var gameover;
 
-        desenharQuadro();
+        startGame();
 
-        function desenharQuadro() {
-            this.width            = 12;
-            this.height           = 8;
+        function startGame() {
+            this.width            = 5;
+            this.height           = 5;
             this.bombsNumber      = 0;
             this.bombMaps         = [];
-            this.difficulty       = 7;
+            this.difficulty       = 5;
             this.mark             = true;
+            this.gameover         = false;
 
             for (var i = 0; i < height; i++) {
                 bombMaps[i] = [];
                 for (var j = 0; j < width; j++) {
                     bombMaps[i][j] = Math.floor((Math.random() * 100/difficulty)) == 0;
                     bombsNumber += bombMaps[i][j] ? 1 : 0;
-                    document.getElementById('board').innerHTML += `<div id="square_${ i }_${ j }" class="square" onclick="selectItem(${ i }, ${ j }, true, event)">&nbsp;</div>`;
+                    document.getElementById('board').innerHTML += `<div id="square_${ i }_${ j }" class="square" onclick="selectItem(${ i }, ${ j }, true, event)" clicked="0">&nbsp;</div>`;
                 }
                 document.getElementById('board').innerHTML += '<br>';
             }
@@ -90,6 +92,7 @@
             if (mark) {
                 if (document.getElementById(`square_${ column }_${ row }`).marked != '1') {
                     if (bombMaps[column][row]) {
+                        this.gameover = true;
                         document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/explosion.png")';
                         if (allowRecursion) {
                             changeItensToRed();
@@ -100,9 +103,9 @@
                             }
                         }
                     } else {
-                        var bombsNumberLaterais = getbombsNumberLaterais(column, row);
+                        var bombNumberOnSides = getbombNumberOnSides(column, row);
 
-                        if (bombsNumberLaterais == 0 && allowRecursion) {
+                        if (bombNumberOnSides == 0 && allowRecursion) {
                             for (var i = -1; i < 2; i++) {
                                 for (var j = -1; j < 2; j++) {
                                     if ((column + i >= 0) && (row + j >= 0) && (column + i < height) && (row + j < width)) {
@@ -112,10 +115,17 @@
                             }
                         }
 
-                        if (bombsNumberLaterais > 0) {
-                            document.getElementById(`square_${ column }_${ row }`).innerHTML = bombsNumberLaterais;
+                        if (bombNumberOnSides > 0) {
+                            document.getElementById(`square_${ column }_${ row }`).innerHTML = bombNumberOnSides;
                         }
                         document.getElementById(`square_${ column }_${ row }`).style.backgroundImage = 'url("./img/square-green.png")';
+                        document.getElementById(`square_${ column }_${ row }`).clicked = 1;
+
+                        if (allowRecursion) {
+                            if (verifyGameOver()) {
+                                alert('Congratulations!!!');
+                            }
+                        }
                     }
                 }
             } else {
@@ -135,20 +145,20 @@
             }
         }
 
-        function getbombsNumberLaterais(column, row) {
-            var bombsNumberLaterais = 0;
+        function getbombNumberOnSides(column, row) {
+            var bombNumberOnSides = 0;
 
             for (var i = -1; i < 2; i++) {
                 for (var j = -1; j < 2; j++) {
                     if ((column + i >= 0) && (row + j >= 0) && (column + i < height) && (row + j < width)) {
                         if (bombMaps[column + i][row + j]) {
-                            bombsNumberLaterais++;
+                            bombNumberOnSides++;
                         }
                     }
                 }
             }
 
-            return bombsNumberLaterais;
+            return bombNumberOnSides;
         }
 
         function changeMovement() {
@@ -164,6 +174,27 @@
                     }
                 }
             }
+        }
+
+        function verifyGameOver() {
+            if (this.gameover) {
+                return false;
+            }
+            blank  = 0;
+
+            for (var i = 0; i < height; i++) {
+                for (var j = 0; j < width; j++) {
+                    if (document.getElementById(`square_${ i }_${ j }`).clicked != '1') {
+                        blank++;
+                    }
+
+                    if (blank > bombsNumberTotal) {
+                        return false;
+                    }
+                }
+            }
+            this.gameover = true;
+            return true;
         }
     </script>
 </body>
