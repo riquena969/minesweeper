@@ -14,7 +14,7 @@
 
         h1 {
             text-transform: uppercase;
-            line-height: 50px
+            text-align: center;
         }
 
         #board {
@@ -61,13 +61,30 @@
         .square-yellow {
             background-image: url('./img/square-yellow.png');
         }
+
+        .github-icon {
+            right: 20px;
+            top: 20px;
+            position: absolute;
+            border-radius: 100%;
+            -webkit-transition: -webkit-transform .4s ease-in-out;
+            transition:         transform .4s ease-in-out;
+        }
+
+        .github-icon:hover {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+
+        .github-icon img {
+            height: 60px;
+        }
     </style>
 </head>
 <body>
-    <h1>
-        <div id="movementType" onclick="changeMovement()" title="Click to change the type of movement. Hint: Press ctrl to change movement temporary"></div>
-        Minesweeper
-    </h1>
+    <h1>Minesweeper</h1>
+    <a href="https://github.com/riquena969/minesweeper" target="_blank" class="github-icon"><img src="./img/github.png"></a>
+    <div id="movementType" onclick="changeMovement()" title="Click to change the type of movement. Hint: Press ctrl to change movement temporary"></div>
     <div><small>Bombs number: <span id="bombsNumber">0</span></small></div>
     <div id="board"></div>
     <script>
