@@ -24,7 +24,6 @@
         }
 
         #movementType {
-            background-image: url("./img/square-green.png");
             background-size: 100% 100%;
             display: inline-block;
             width: 50px;
@@ -199,7 +198,7 @@
 
         function changeMovement() {
             mark = !mark;
-            document.getElementById('movementType').className = 'item square-' + (mark ? 'green' : 'yellow');
+            document.getElementById('movementType').className = 'square-' + (mark ? 'green' : 'yellow');
         }
 
         function changeItensToRed() {
