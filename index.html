@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>...</title>
+    <style>
+        .square {
+            background-image: url('./img/square.png');
+            background-size: 100% 100%;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 2px;
+            line-height: 50px;
+            text-align: center;
+            font-weight: bolder;
+           -webkit-user-select: none;
+           -khtml-user-select: none;
+           -moz-user-select: none;
+           -ms-user-select: none;
+           user-select: none;
+        }
+
+        #tipoJogada {
+            padding: 4px 20px;
+            background-color: #323232;
+            color: #EEE;
+        }
+    </style>
+</head>
+<body>
+    <h1>Campo minado</h1>
+    <div>
+        <small>Quantidade de bombas: <span id="quantidadeBombas">0</span></small>
+    </div>
+    <button id="tipoJogada" onclick="alterarJogada()">Jogar</button>
+    <div id="board"></div>
+    <script>
+        var width            = 12;
+        var height           = 8;
+        var quantidadeBombas = 0;
+        var mapaBombas       = [];
+        var dificuldade      = 20;
+        var jogar            = true;
+
+        desenharQuadro();
+
+        function desenharQuadro() {
+            for (var i = 0; i < height; i++) {
+                mapaBombas[i] = [];
+                for (var j = 0; j < width; j++) {
+                    mapaBombas[i][j] = Math.floor((Math.random() * 100/dificuldade)) == 0;
+                    quantidadeBombas += mapaBombas[i][j] ? 1 : 0;
+                    document.getElementById('board').innerHTML += `<div id="quadrado_${ i }_${ j }" class="square" onclick="selecionarQuadrado(${ i }, ${ j }, true)">&nbsp;</div>`;
+                }
+                document.getElementById('board').innerHTML += '<br>';
+            }
+
+            document.getElementById('quantidadeBombas').innerHTML = quantidadeBombas;
+        }
+
+        function selecionarQuadrado(coluna, linha, permitirRecursao) {
+            if (jogar) {
+                if (document.getElementById(`quadrado_${ coluna }_${ linha }`).marked != '1') {
+                    if (mapaBombas[coluna][linha]) {
+                        document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/explosion.png")';
+                        if (permitirRecursao) {
+                            for (var i = 0; i < height; i++) {
+                                for (var j = 0; j < width; j++) {
+                                    selecionarQuadrado(i, j, false);
+                                }
+                                document.getElementById('board').innerHTML += '<br>';
+                            }
+                        }
+                    } else {
+                        var quantidadeBombasLaterais = getQuantidadeBombasLaterais(coluna, linha);
+
+                        if (quantidadeBombasLaterais == 0 && permitirRecursao) {
+                            for (var i = -1; i < 2; i++) {
+                                for (var j = -1; j < 2; j++) {
+                                    if ((coluna + i >= 0) && (linha + j >= 0) && (coluna + i < height) && (linha + j < width)) {
+                                        selecionarQuadrado(coluna + i, linha + j, false);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (quantidadeBombasLaterais > 0) {
+                            document.getElementById(`quadrado_${ coluna }_${ linha }`).innerHTML = quantidadeBombasLaterais;
+                        }
+                        document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square-green.png")';
+                    }
+                }
+            } else {
+                if (document.getElementById(`quadrado_${ coluna }_${ linha }`).marked == '1') {
+                    quantidadeBombas++;
+                    document.getElementById(`quadrado_${ coluna }_${ linha }`).marked = '0';
+                    document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square.png")';
+                } else {
+                    quantidadeBombas--;
+                    document.getElementById(`quadrado_${ coluna }_${ linha }`).marked = '1';
+                    document.getElementById(`quadrado_${ coluna }_${ linha }`).style.backgroundImage = 'url("./img/square-yellow.png")';
+                }
+                document.getElementById('quantidadeBombas').innerHTML = quantidadeBombas;
+            }
+        }
+
+        function getQuantidadeBombasLaterais(coluna, linha) {
+            var quantidadeBombasLaterais = 0;
+
+            for (var i = -1; i < 2; i++) {
+                for (var j = -1; j < 2; j++) {
+                    if ((coluna + i >= 0) && (linha + j >= 0) && (coluna + i < height) && (linha + j < width)) {
+                        if (mapaBombas[coluna + i][linha + j]) {
+                            quantidadeBombasLaterais++;
+                        }
+                    }
+                }
+            }
+
+            return quantidadeBombasLaterais;
+        }
+
+        function alterarJogada() {
+            jogar = !jogar;
+            document.getElementById('tipoJogada').innerHTML = jogar ? 'Jogar' : 'Marcar';
+        }
+    </script>
+</body>
+</html>
