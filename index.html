@@ -4,9 +4,23 @@
     <meta charset="UTF-8">
     <title>Minesweeper</title>
     <style>
+        body {
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
         h1 {
             text-transform: uppercase;
             line-height: 50px
+        }
+
+        #board {
+            border: 2px dotted #555;
+            width: auto;
+            display: inline-block;
         }
 
         #movementType {
@@ -27,30 +41,24 @@
             line-height: 50px;
             text-align: center;
             font-weight: bolder;
-           -webkit-user-select: none;
-           -khtml-user-select: none;
-           -moz-user-select: none;
-           -ms-user-select: none;
-           user-select: none;
         }
     </style>
 </head>
 <body>
     <h1>
-        <div id="movementType" onclick="changeMovement()" title="Click to change the type of movement"></div>
+        <div id="movementType" onclick="changeMovement()" title="Click to change the type of movement. Hint: Press ctrl to change movement temporary"></div>
         Minesweeper
     </h1>
     <div><small>Bombs number: <span id="bombsNumber">0</span></small></div>
     <div id="board"></div>
     <script>
-        var width            = 12;
-        var height           = 8;
-        var bombsNumberTotal = 0;
-        var bombsNumber      = 0;
-        var bombMaps         = [];
-        var difficulty       = 5;
-        var mark             = true;
-        var ctrl             = false;
+        var width;
+        var height;
+        var bombsNumberTotal;
+        var bombsNumber;
+        var bombMaps;
+        var difficulty;
+        var mark;
 
         desenharQuadro();
 
@@ -59,7 +67,7 @@
             this.height           = 8;
             this.bombsNumber      = 0;
             this.bombMaps         = [];
-            this.difficulty       = 5;
+            this.difficulty       = 7;
             this.mark             = true;
 
             for (var i = 0; i < height; i++) {
