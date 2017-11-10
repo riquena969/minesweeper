@@ -76,7 +76,6 @@ h1 {
     right: 20px;
     top: 20px;
     position: absolute;
-    border-radius: 100%;
     -webkit-transition: -webkit-transform .4s ease-in-out;
     transition:         transform .4s ease-in-out;
 }
@@ -88,4 +87,5 @@ h1 {
 
 .github-icon img {
     height: 60px;
+    border-radius: 100%;
 }

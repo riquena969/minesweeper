@@ -170,7 +170,6 @@ function startTimer() {
     timerActive = true;
     var s = 1;
     var m = 0;
-
     timer = window.setInterval(function() {
         document.getElementById("timer").innerHTML = 'Time: ';
         if (s == 60) { m++; s = 0; }
