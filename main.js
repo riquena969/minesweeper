@@ -10,11 +10,11 @@ var gameover;
 startGame();
 
 function startGame() {
-    this.width            = 8;
-    this.height           = 8;
+    this.width            = document.getElementById('width').value;
+    this.height           = document.getElementById('height').value;
     this.bombsNumber      = 0;
     this.bombMaps         = [];
-    this.difficulty       = 15;
+    this.difficulty       = document.getElementById('difficulty').value;
     this.mark             = true;
     this.gameover         = false;
 
@@ -182,4 +182,15 @@ function startTimer() {
 function stopTimer() {
     timerActive = false;
     window.clearInterval(timer);
+}
+
+function preferences() {
+    document.getElementById('modalPreferences').style.display = 'block';
+}
+
+function closePreferences(apply) {
+    document.getElementById('modalPreferences').style.display = 'none';
+    if (apply) {
+        startGame();
+    }
 }

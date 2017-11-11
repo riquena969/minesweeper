@@ -10,10 +10,38 @@
     <a href="https://github.com/riquena969/minesweeper" target="_blank" class="github-icon"><img src="./img/github.png"></a>
     <div id="movementType" class="square-green" onclick="changeMovement()" title="Click to change the type of movement. Hint: Press ctrl to change movement temporary">&nbsp;</div>
     <div id="reloadButton" onclick="startGame()" title="Click to reload the game">&nbsp;</div>
+    <div id="preferencesButton" onclick="preferences()" title="Click to configure the game">&nbsp;</div>
     <div id="timer"></div>
 
     <div><small>Bombs: <span id="bombsNumber">0</span></small></div>
     <div id="board"></div>
+
+    <div class="modal" id="modalPreferences">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalPreferences').style.display = 'none';">&times;</span>
+            <div style="clear: both"></div>
+            <div class="cols-3">
+                <label for="width">Width</label>
+                <input type="number" id="width" value="8" min=6>
+            </div>
+            <div class="cols-3">
+                <label for="height">Height</label>
+                <input type="number" id="height" value="8" min=6>
+            </div>
+            <div class="cols-3">
+                <label for="difficulty">Difficulty</label>
+                <input type="number" id="difficulty" value="20" min="5" max="99">
+            </div>
+            <div class="cols-3">
+            </div>
+            <div class="cols-3">
+                <button class="button" type="button" onclick="closePreferences(true)">Apply and close</button>
+            </div>
+            <div class="cols-3">
+                <button class="button" type="button" onclick="closePreferences(false)">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script src="./main.js"></script>
 </body>
